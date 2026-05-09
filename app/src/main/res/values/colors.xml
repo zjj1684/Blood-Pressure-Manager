@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#1976D2</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="accent">#FF6F00</color>
+    <color name="waveform_bg">#1A1A2E</color>
+    <color name="waveform_ppg">#FF1744</color>
+    <color name="waveform_ecg">#00E676</color>
+    <color name="waveform_grid">#33FFFFFF</color>
+</resources>

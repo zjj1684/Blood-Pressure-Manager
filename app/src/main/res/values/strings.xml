@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">血压健康</string>
+    <string name="nav_home">主页</string>
+    <string name="nav_monitor">监测</string>
+    <string name="nav_history">历史</string>
+    <string name="btn_start">开始采集</string>
+    <string name="btn_stop">停止采集</string>
+    <string name="btn_connect">连接设备</string>
+    <string name="btn_disconnect">断开连接</string>
+    <string name="status_disconnected">未连接</string>
+    <string name="status_connecting">连接中…</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_collecting">采集中…</string>
+    <string name="label_systolic">收缩压</string>
+    <string name="label_diastolic">舒张压</string>
+    <string name="label_heart_rate">心率</string>
+</resources>

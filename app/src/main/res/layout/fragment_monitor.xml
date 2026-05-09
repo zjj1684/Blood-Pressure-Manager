@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/status_disconnected"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_connect" />
+    </LinearLayout>
+
+    <com.bloodpressure.app.waveform.WaveformView
+        android:id="@+id/waveform_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_systolic"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_systolic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_diastolic"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_diastolic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_heart_rate"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_heart_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-- bpm"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_start_stop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="@string/btn_start"
+        android:enabled="false" />
+
+</LinearLayout>
