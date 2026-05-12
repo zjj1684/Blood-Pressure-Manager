@@ -49,7 +49,7 @@
 ### 发送方式
 
 ```
-Write Type: WRITE_TYPE_DEFAULT (Write with response)
+Write Type: WRITE_TYPE_NO_RESPONSE (Write without response)
 Write Value: [0x01] 或 [0x02]
 ```
 
@@ -193,7 +193,7 @@ int ecg = (((byte1 & 0x0F) << 8) | (byte2 & 0xFF));
 
 ```java
 characteristic.setValue(new byte[]{0x01}); // CMD_START
-characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
 gatt.writeCharacteristic(characteristic);
 ```
 
