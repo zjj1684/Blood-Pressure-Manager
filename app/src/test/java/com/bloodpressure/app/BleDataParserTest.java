@@ -18,29 +18,25 @@ public class BleDataParserTest {
     }
 
     @Test
-    public void parse_validDataPacket_returns5Samples() {
-        // 17 bytes: 1 type + 1 seq + 15 data (5 samples * 3 bytes)
-        byte[] data = new byte[17];
+    public void parse_validDataPacket_returns1Sample() {
+        // 5 bytes: 1 type + 1 seq + 3 data (1 sample * 3 bytes)
+        byte[] data = new byte[5];
         data[0] = 0x02; // type
         data[1] = 0x00; // seq
-        // Fill sample data bytes
-        for (int i = 0; i < 5; i++) {
-            int offset = 2 + i * 3;
-            data[offset] = (byte) 0x80;     // PPG high
-            data[offset + 1] = (byte) 0x00; // mid
-            data[offset + 2] = (byte) 0x00; // ECG low
-        }
+        data[2] = (byte) 0x80; // PPG high
+        data[3] = (byte) 0x00; // mid
+        data[4] = (byte) 0x00; // ECG low
 
         BleDataParser.ParseResult result = parser.parse(data);
 
         assertNotNull(result);
-        assertEquals(5, result.samples.size());
+        assertEquals(1, result.samples.size());
         assertEquals(0, result.seq);
     }
 
     @Test
     public void parse_invalidType_returnsNull() {
-        byte[] data = new byte[16];
+        byte[] data = new byte[5];
         data[0] = 0x01; // wrong type
 
         BleDataParser.ParseResult result = parser.parse(data);
@@ -49,7 +45,7 @@ public class BleDataParserTest {
 
     @Test
     public void parse_shortData_returnsNull() {
-        byte[] data = new byte[10];
+        byte[] data = new byte[4];
         BleDataParser.ParseResult result = parser.parse(data);
         assertNull(result);
     }
@@ -62,11 +58,11 @@ public class BleDataParserTest {
 
     @Test
     public void parse_correctPpgEcgValues() {
-        byte[] data = new byte[17];
+        byte[] data = new byte[5];
         data[0] = 0x02;
         data[1] = 0x00;
 
-        // First sample: PPG=0x800, ECG=0x400
+        // Sample: PPG=0x800, ECG=0x400
         // PPG[11:4] = 0x80, PPG[3:0]<<4|ECG[11:8] = 0x04, ECG[7:0] = 0x00
         data[2] = (byte) 0x80;
         data[3] = (byte) 0x04;
@@ -102,7 +98,7 @@ public class BleDataParserTest {
     }
 
     private byte[] createPacket(int seq) {
-        byte[] data = new byte[17];
+        byte[] data = new byte[5];
         data[0] = 0x02;
         data[1] = (byte) seq;
         return data;

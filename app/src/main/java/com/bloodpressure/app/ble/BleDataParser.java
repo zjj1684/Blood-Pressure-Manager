@@ -8,8 +8,8 @@ import java.util.List;
 public class BleDataParser {
 
     private static final int PACKET_TYPE_DATA = 0x02;
-    private static final int PACKET_SIZE = 17;
-    private static final int SAMPLES_PER_PACKET = 5;
+    private static final int PACKET_SIZE = 5;
+    private static final int SAMPLES_PER_PACKET = 1;
     private static final int DATA_OFFSET = 2;
 
     private int lastSeq = -1;
