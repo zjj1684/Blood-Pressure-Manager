@@ -8,7 +8,7 @@ import android.view.View;
 public class WaveformView extends View {
 
     private static final int BUFFER_CAPACITY = 5000;
-    private static final int VISIBLE_SAMPLES = 100;
+    private static final int VISIBLE_SAMPLES = 2000;
     private static final long REFRESH_INTERVAL_MS = 16;
 
     private final CircularBuffer buffer;

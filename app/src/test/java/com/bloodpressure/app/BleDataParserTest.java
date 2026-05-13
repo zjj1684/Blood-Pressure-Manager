@@ -19,13 +19,12 @@ public class BleDataParserTest {
 
     @Test
     public void parse_validDataPacket_returns1Sample() {
-        // 5 bytes: 1 type + 1 seq + 3 data (1 sample * 3 bytes)
-        byte[] data = new byte[5];
-        data[0] = 0x02; // type
-        data[1] = 0x00; // seq
-        data[2] = (byte) 0x80; // PPG high
-        data[3] = (byte) 0x00; // mid
-        data[4] = (byte) 0x00; // ECG low
+        // 6 bytes: 02 00 80 00 00 02 (first packet + second packet type marker)
+        byte[] data = new byte[]{
+                0x02, 0x00,
+                (byte) 0x80, (byte) 0x00, (byte) 0x00,
+                0x02
+        };
 
         BleDataParser.ParseResult result = parser.parse(data);
 
@@ -33,6 +32,42 @@ public class BleDataParserTest {
         assertEquals(1, result.samples.size());
         assertEquals(0, result.seq);
     }
+
+    @Test
+    public void parse_stripsHeader682F_parsesFrom02() {
+        // 68 2F 02 00 80 00 00 02 (header + one packet + next type marker)
+        byte[] data = new byte[]{
+                (byte) 0x68, (byte) 0x2F,
+                0x02, 0x00,
+                (byte) 0x80, 0x00, 0x00,
+                0x02
+        };
+
+        BleDataParser.ParseResult result = parser.parse(data);
+
+        assertNotNull(result);
+        assertEquals(1, result.samples.size());
+        assertEquals(0, result.seq);
+    }
+
+    @Test
+    public void parse_multiplePacketsInOneChunk_returnsAllSamples() {
+        // 68 2F 02 00 80 00 00 02 01 40 02 00
+        byte[] data = new byte[]{
+                (byte) 0x68, (byte) 0x2F,
+                0x02, 0x00,
+                (byte) 0x80, 0x00, 0x00,
+                0x02, 0x01,
+                (byte) 0x40, 0x02, 0x00
+        };
+
+        BleDataParser.ParseResult result = parser.parse(data);
+
+        assertNotNull(result);
+        assertEquals(2, result.samples.size());
+        assertEquals(1, result.seq);
+    }
+
 
     @Test
     public void parse_invalidType_returnsNull() {
@@ -58,15 +93,12 @@ public class BleDataParserTest {
 
     @Test
     public void parse_correctPpgEcgValues() {
-        byte[] data = new byte[5];
-        data[0] = 0x02;
-        data[1] = 0x00;
-
-        // Sample: PPG=0x800, ECG=0x400
-        // PPG[11:4] = 0x80, PPG[3:0]<<4|ECG[11:8] = 0x04, ECG[7:0] = 0x00
-        data[2] = (byte) 0x80;
-        data[3] = (byte) 0x04;
-        data[4] = (byte) 0x00;
+        // 02 00 80 04 00 02 (one packet + next type marker)
+        byte[] data = new byte[]{
+                0x02, 0x00,
+                (byte) 0x80, (byte) 0x04, (byte) 0x00,
+                0x02
+        };
 
         BleDataParser.ParseResult result = parser.parse(data);
         assertNotNull(result);
@@ -98,9 +130,11 @@ public class BleDataParserTest {
     }
 
     private byte[] createPacket(int seq) {
-        byte[] data = new byte[5];
+        // 02 seq 00 00 00 02 (packet + next type marker for boundary validation)
+        byte[] data = new byte[6];
         data[0] = 0x02;
         data[1] = (byte) seq;
+        data[5] = 0x02;
         return data;
     }
 }
