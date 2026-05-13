@@ -89,6 +89,8 @@ public class WaveformRenderer {
         }
     }
 
+    private static final float OUTLIER_THRESHOLD = 300f;
+
     private void drawWaveform(Canvas canvas, int[] data, Path path, Paint paint,
                                int width, int height, int offsetY,
                                float displayMin, float displayMax) {
@@ -100,9 +102,25 @@ public class WaveformRenderer {
         int n = data.length;
         if (n < 2) return;
 
+        // Copy and filter outliers
+        int[] filtered = new int[n];
+        filtered[0] = data[0];
+        for (int i = 1; i < n - 1; i++) {
+            int prev = filtered[i - 1];
+            int cur = data[i];
+            int next = data[i + 1];
+            int median = Math.max(Math.min(prev, cur), Math.min(Math.max(prev, cur), next));
+            if (Math.abs(cur - median) > OUTLIER_THRESHOLD) {
+                filtered[i] = (prev + next) / 2;
+            } else {
+                filtered[i] = cur;
+            }
+        }
+        filtered[n - 1] = data[n - 1];
+
         float[] ys = new float[n];
         for (int i = 0; i < n; i++) {
-            ys[i] = offsetY + height * (1f - clamp((data[i] - displayMin) / range));
+            ys[i] = offsetY + height * (1f - clamp((filtered[i] - displayMin) / range));
         }
 
         path.moveTo(0, ys[0]);
