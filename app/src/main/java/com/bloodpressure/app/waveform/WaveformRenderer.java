@@ -1,5 +1,6 @@
 package com.bloodpressure.app.waveform;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,8 +22,20 @@ public class WaveformRenderer {
     private final Path ppgPath;
     private final Path ecgPath;
 
-    private static final float DISPLAY_MIN = 1100f;
-    private static final float DISPLAY_MAX = 3000f;
+    private static final float DISPLAY_MIN = 1000f;
+    private static final float DISPLAY_MAX = 3100f;
+    private static final float OUTLIER_THRESHOLD = 300f;
+    private static final float ECG_LPF_ALPHA = 0.3f;  // EMA coefficient: lower = more smoothing
+
+    // Pre-allocated buffers to avoid GC pressure
+    private int[] filteredBuf = new int[0];
+    private float[] ysBuf = new float[0];
+    private float ecgEmaState = Float.NaN;  // EMA state for ECG low-pass filter
+
+    // Cached grid bitmap
+    private Bitmap gridBitmap;
+    private int cachedWidth;
+    private int cachedHeight;
 
     public WaveformRenderer() {
         gridPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -50,83 +63,98 @@ public class WaveformRenderer {
         ecgPath = new Path();
     }
 
-    public void render(Canvas canvas, int[] ppgData, int[] ecgData) {
+    public void render(Canvas canvas, int[] ppgData, int ppgLen, int[] ecgData, int ecgLen) {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
 
         // Background
         canvas.drawRect(0, 0, width, height, bgPaint);
 
-        // Split into two halves
-        int halfHeight = height / 2;
+        // Draw cached grid (only redrawn when size changes)
+        if (gridBitmap == null || cachedWidth != width || cachedHeight != height) {
+            buildGridBitmap(width, height);
+        }
+        canvas.drawBitmap(gridBitmap, 0, 0, null);
 
-        // Draw grid
-        drawGrid(canvas, width, halfHeight, 0);
-        drawGrid(canvas, width, halfHeight, halfHeight);
+        int halfHeight = height / 2;
 
         // Draw labels
         canvas.drawText("PPG", 10, 30, textPaint);
         canvas.drawText("ECG", 10, halfHeight + 30, textPaint);
 
         // Draw waveforms
-        if (ppgData != null && ppgData.length > 1) {
-            drawWaveform(canvas, ppgData, ppgPath, ppgLinePaint, width, halfHeight, 0,
-                    DISPLAY_MIN, DISPLAY_MAX);
+        if (ppgData != null && ppgLen > 1) {
+            drawWaveform(canvas, ppgData, ppgLen, ppgPath, ppgLinePaint, width, halfHeight, 0,
+                    DISPLAY_MIN, DISPLAY_MAX, false);
         }
-        if (ecgData != null && ecgData.length > 1) {
-            drawWaveform(canvas, ecgData, ecgPath, ecgLinePaint, width, halfHeight, halfHeight,
-                    DISPLAY_MIN, DISPLAY_MAX);
+        if (ecgData != null && ecgLen > 1) {
+            drawWaveform(canvas, ecgData, ecgLen, ecgPath, ecgLinePaint, width, halfHeight, halfHeight,
+                    DISPLAY_MIN, DISPLAY_MAX, true);
         }
     }
 
-    private void drawGrid(Canvas canvas, int width, int height, int offsetY) {
+    private void buildGridBitmap(int width, int height) {
+        gridBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_4444);
+        Canvas c = new Canvas(gridBitmap);
         int gridSpacing = 50;
         for (int x = 0; x < width; x += gridSpacing) {
-            canvas.drawLine(x, offsetY, x, offsetY + height, gridPaint);
+            c.drawLine(x, 0, x, height, gridPaint);
         }
-        for (int y = offsetY; y <= offsetY + height; y += gridSpacing) {
-            canvas.drawLine(0, y, width, y, gridPaint);
+        for (int y = 0; y <= height; y += gridSpacing) {
+            c.drawLine(0, y, width, y, gridPaint);
         }
+        cachedWidth = width;
+        cachedHeight = height;
     }
 
-    private static final float OUTLIER_THRESHOLD = 300f;
-
-    private void drawWaveform(Canvas canvas, int[] data, Path path, Paint paint,
+    private void drawWaveform(Canvas canvas, int[] data, int n, Path path, Paint paint,
                                int width, int height, int offsetY,
-                               float displayMin, float displayMax) {
+                               float displayMin, float displayMax, boolean applyEma) {
         path.reset();
 
         float range = displayMax - displayMin;
         if (range < 1f) range = 1f;
-        float xStep = (float) width / data.length;
-        int n = data.length;
-        if (n < 2) return;
+        float xStep = (float) width / n;
 
-        // Copy and filter outliers
-        int[] filtered = new int[n];
-        filtered[0] = data[0];
+        // Ensure pre-allocated buffers are large enough
+        if (filteredBuf.length < n) {
+            filteredBuf = new int[n];
+            ysBuf = new float[n];
+        }
+
+        // Filter outliers in-place
+        filteredBuf[0] = data[0];
         for (int i = 1; i < n - 1; i++) {
-            int prev = filtered[i - 1];
+            int prev = filteredBuf[i - 1];
             int cur = data[i];
             int next = data[i + 1];
             int median = Math.max(Math.min(prev, cur), Math.min(Math.max(prev, cur), next));
             if (Math.abs(cur - median) > OUTLIER_THRESHOLD) {
-                filtered[i] = (prev + next) / 2;
+                filteredBuf[i] = (prev + next) / 2;
             } else {
-                filtered[i] = cur;
+                filteredBuf[i] = cur;
             }
         }
-        filtered[n - 1] = data[n - 1];
+        filteredBuf[n - 1] = data[n - 1];
 
-        float[] ys = new float[n];
-        for (int i = 0; i < n; i++) {
-            ys[i] = offsetY + height * (1f - clamp((filtered[i] - displayMin) / range));
+        // EMA low-pass filter for ECG to reduce high-frequency noise
+        if (applyEma) {
+            if (Float.isNaN(ecgEmaState)) {
+                ecgEmaState = filteredBuf[0];
+            }
+            for (int i = 0; i < n; i++) {
+                ecgEmaState = ECG_LPF_ALPHA * filteredBuf[i] + (1f - ECG_LPF_ALPHA) * ecgEmaState;
+                filteredBuf[i] = Math.round(ecgEmaState);
+            }
         }
 
-        path.moveTo(0, ys[0]);
+        for (int i = 0; i < n; i++) {
+            ysBuf[i] = offsetY + height * (1f - clamp((filteredBuf[i] - displayMin) / range));
+        }
 
+        path.moveTo(0, ysBuf[0]);
         for (int i = 1; i < n; i++) {
-            path.lineTo(i * xStep, ys[i]);
+            path.lineTo(i * xStep, ysBuf[i]);
         }
 
         canvas.drawPath(path, paint);
@@ -136,4 +164,14 @@ public class WaveformRenderer {
         return Math.max(0f, Math.min(1f, value));
     }
 
+    public void resetFilterState() {
+        ecgEmaState = Float.NaN;
+    }
+
+    public void release() {
+        if (gridBitmap != null) {
+            gridBitmap.recycle();
+            gridBitmap = null;
+        }
+    }
 }

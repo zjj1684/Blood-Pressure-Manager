@@ -48,8 +48,9 @@ public class CircularBufferTest {
         buffer.add(100, 200);
         buffer.add(300, 400);
 
-        int[] ppg = buffer.getPpgRange(2);
-        assertEquals(2, ppg.length);
+        int[] ppg = new int[10];
+        int len = buffer.copyPpgRange(ppg, 2);
+        assertEquals(2, len);
         assertEquals(100, ppg[0]);
         assertEquals(300, ppg[1]);
     }
@@ -59,8 +60,9 @@ public class CircularBufferTest {
         buffer.add(100, 200);
         buffer.add(300, 400);
 
-        int[] ecg = buffer.getEcgRange(2);
-        assertEquals(2, ecg.length);
+        int[] ecg = new int[10];
+        int len = buffer.copyEcgRange(ecg, 2);
+        assertEquals(2, len);
         assertEquals(200, ecg[0]);
         assertEquals(400, ecg[1]);
     }
@@ -68,8 +70,9 @@ public class CircularBufferTest {
     @Test
     public void getRange_countLargerThanSize_returnsAll() {
         buffer.add(100, 200);
-        int[] ppg = buffer.getPpgRange(10);
-        assertEquals(1, ppg.length);
+        int[] ppg = new int[10];
+        int len = buffer.copyPpgRange(ppg, 10);
+        assertEquals(1, len);
     }
 
     @Test
@@ -82,7 +85,9 @@ public class CircularBufferTest {
         buffer.addBatch(samples);
         assertEquals(3, buffer.getSize());
 
-        int[] ppg = buffer.getPpgRange(3);
+        int[] ppg = new int[10];
+        int len = buffer.copyPpgRange(ppg, 3);
+        assertEquals(3, len);
         assertEquals(100, ppg[0]);
         assertEquals(300, ppg[1]);
         assertEquals(500, ppg[2]);
@@ -97,9 +102,10 @@ public class CircularBufferTest {
     }
 
     @Test
-    public void getRange_emptyBuffer_returnsEmptyArray() {
-        int[] ppg = buffer.getPpgRange(10);
-        assertEquals(0, ppg.length);
+    public void getRange_emptyBuffer_returnsZeroLength() {
+        int[] ppg = new int[10];
+        int len = buffer.copyPpgRange(ppg, 10);
+        assertEquals(0, len);
     }
 
     @Test
@@ -112,9 +118,10 @@ public class CircularBufferTest {
             }
         });
 
+        int[] readBuf = new int[100];
         Thread reader = new Thread(() -> {
             for (int i = 0; i < 5000; i++) {
-                sharedBuffer.getPpgRange(100);
+                sharedBuffer.copyPpgRange(readBuf, 100);
             }
         });
 

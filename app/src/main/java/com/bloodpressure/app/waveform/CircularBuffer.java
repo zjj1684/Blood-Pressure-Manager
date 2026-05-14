@@ -54,27 +54,25 @@ public class CircularBuffer {
         return capacity;
     }
 
-    public int[] getPpgRange(int count) {
+    public int copyPpgRange(int[] dest, int count) {
         synchronized (lock) {
             int n = Math.min(count, size);
-            int[] result = new int[n];
             int start = (head - n + capacity) % capacity;
             for (int i = 0; i < n; i++) {
-                result[i] = ppgBuffer[(start + i) % capacity];
+                dest[i] = ppgBuffer[(start + i) % capacity];
             }
-            return result;
+            return n;
         }
     }
 
-    public int[] getEcgRange(int count) {
+    public int copyEcgRange(int[] dest, int count) {
         synchronized (lock) {
             int n = Math.min(count, size);
-            int[] result = new int[n];
             int start = (head - n + capacity) % capacity;
             for (int i = 0; i < n; i++) {
-                result[i] = ecgBuffer[(start + i) % capacity];
+                dest[i] = ecgBuffer[(start + i) % capacity];
             }
-            return result;
+            return n;
         }
     }
 
