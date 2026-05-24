@@ -3,7 +3,9 @@ package com.bloodpressure.app;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.os.Build;
+
+import com.chaquo.python.Python;
+import com.chaquo.python.android.AndroidPlatform;
 
 public class BloodPressureApplication extends Application {
 
@@ -13,6 +15,13 @@ public class BloodPressureApplication extends Application {
     public void onCreate() {
         super.onCreate();
         createNotificationChannels();
+        initPython();
+    }
+
+    private void initPython() {
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
+        }
     }
 
     private void createNotificationChannels() {

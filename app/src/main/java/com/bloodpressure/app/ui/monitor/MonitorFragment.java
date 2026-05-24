@@ -19,8 +19,20 @@ import androidx.lifecycle.ViewModelProvider;
 import com.bloodpressure.app.R;
 import com.bloodpressure.app.ble.BleConnectionManager;
 import com.bloodpressure.app.ble.BleService;
+import com.bloodpressure.app.bp.PythonBpCalculator;
+import com.bloodpressure.app.data.model.SampleData;
 import com.bloodpressure.app.ui.main.SharedBleViewModel;
 import com.bloodpressure.app.waveform.WaveformView;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MonitorFragment extends Fragment {
 
@@ -28,6 +40,13 @@ public class MonitorFragment extends Fragment {
 
     private SharedBleViewModel sharedViewModel;
     private WaveformView waveformView;
+    private PythonBpCalculator calculator;
+    private int totalSamplesSent = 0;
+    private static final int ALGO_BATCH_SIZE = 1000;
+    private final List<Double> ecgBuffer = new ArrayList<>();
+    private final List<Double> ppgBuffer = new ArrayList<>();
+    private final ExecutorService algoExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
     private TextView tvStatus;
     private TextView tvSystolic;
     private TextView tvDiastolic;
@@ -91,8 +110,42 @@ public class MonitorFragment extends Fragment {
     private void setupBleCallbacks(BleService service) {
         service.setDataCallback(new BleService.DataCallback() {
             @Override
-            public void onSamplesReceived(java.util.List<com.bloodpressure.app.data.model.SampleData> samples) {
+            public void onSamplesReceived(List<SampleData> samples) {
                 waveformView.addBatch(samples);
+
+                if (calculator == null || samples.isEmpty()) return;
+
+                for (SampleData s : samples) {
+                    ecgBuffer.add((double) s.getEcg());
+                    ppgBuffer.add((double) s.getPpg());
+                }
+
+                if (ecgBuffer.size() >= ALGO_BATCH_SIZE) {
+                    double[] ecgArr = new double[ALGO_BATCH_SIZE];
+                    double[] ppgArr = new double[ALGO_BATCH_SIZE];
+                    for (int i = 0; i < ALGO_BATCH_SIZE; i++) {
+                        ecgArr[i] = ecgBuffer.remove(0);
+                        ppgArr[i] = ppgBuffer.remove(0);
+                    }
+
+                    algoExecutor.execute(() -> {
+                        List<Map<String, Object>> features = calculator.processChunk(ecgArr, ppgArr);
+                        totalSamplesSent += ALGO_BATCH_SIZE;
+                        Log.d("BpCalc", "samples_sent=" + totalSamplesSent
+                                + " features=" + features.size());
+
+                        for (Map<String, Object> f : features) {
+                            Object hrObj = f.get("hr");
+                            if (hrObj instanceof Number) {
+                                double hrVal = ((Number) hrObj).doubleValue();
+                                if (!Double.isNaN(hrVal)) {
+                                    int hr = (int) Math.round(hrVal);
+                                    mainHandler.post(() -> sharedViewModel.updateBpValues(0, 0, hr));
+                                }
+                            }
+                        }
+                    });
+                }
             }
 
             @Override
@@ -133,12 +186,17 @@ public class MonitorFragment extends Fragment {
         }
         if (service.isCollecting()) {
             service.stopCollecting();
+            calculator = null;
             btnStartStop.setText(R.string.btn_start);
             Toast.makeText(requireContext(), "已发送停止指令 (0x02)", Toast.LENGTH_SHORT).show();
         } else {
             long sessionId = System.currentTimeMillis();
             boolean ok = service.startCollecting(sessionId);
             if (ok) {
+                calculator = new PythonBpCalculator(1000);
+                totalSamplesSent = 0;
+                ecgBuffer.clear();
+                ppgBuffer.clear();
                 btnStartStop.setText(R.string.btn_stop);
                 waveformView.clear();
                 Toast.makeText(requireContext(), "发送成功 (0x01)", Toast.LENGTH_SHORT).show();
@@ -194,6 +252,12 @@ public class MonitorFragment extends Fragment {
                 Toast.makeText(requireContext(), "需要蓝牙和位置权限才能扫描设备", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        algoExecutor.shutdownNow();
     }
 
     private String getStateText(BleConnectionManager.State state) {
