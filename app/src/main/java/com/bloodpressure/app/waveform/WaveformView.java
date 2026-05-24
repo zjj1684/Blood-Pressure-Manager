@@ -54,7 +54,7 @@ public class WaveformView extends View {
     }
 
     private void startIfNeeded() {
-        if (!isRunning) {
+        if (!isRunning && isAttachedToWindow()) {
             isRunning = true;
             Choreographer.getInstance().postFrameCallback(frameCallback);
         }

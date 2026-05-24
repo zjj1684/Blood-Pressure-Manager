@@ -6,9 +6,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.button.MaterialButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,8 +52,9 @@ public class MonitorFragment extends Fragment {
     private TextView tvSystolic;
     private TextView tvDiastolic;
     private TextView tvHeartRate;
-    private Button btnConnect;
-    private Button btnStartStop;
+    private MaterialButton btnConnect;
+    private MaterialButton btnStartStop;
+    private View statusDot;
 
     @Nullable
     @Override
@@ -74,6 +76,7 @@ public class MonitorFragment extends Fragment {
         tvHeartRate = view.findViewById(R.id.tv_heart_rate);
         btnConnect = view.findViewById(R.id.btn_connect);
         btnStartStop = view.findViewById(R.id.btn_start_stop);
+        statusDot = view.findViewById(R.id.view_status_dot);
 
         btnConnect.setOnClickListener(v -> onConnectClicked());
         btnStartStop.setOnClickListener(v -> onStartStopClicked());
@@ -83,6 +86,9 @@ public class MonitorFragment extends Fragment {
             boolean connected = state == BleConnectionManager.State.CONNECTED;
             btnStartStop.setEnabled(connected);
             btnConnect.setText(connected ? R.string.btn_disconnect : R.string.btn_connect);
+            statusDot.setBackgroundResource(connected
+                    ? R.drawable.bg_status_dot_connected
+                    : R.drawable.bg_status_dot_disconnected);
             if (!connected) {
                 btnStartStop.setText(R.string.btn_start);
             }
@@ -103,6 +109,10 @@ public class MonitorFragment extends Fragment {
         sharedViewModel.getBleServiceLiveData().observe(getViewLifecycleOwner(), service -> {
             if (service != null) {
                 setupBleCallbacks(service);
+                // 同步采集状态到按钮
+                if (service.isCollecting()) {
+                    btnStartStop.setText(R.string.btn_stop);
+                }
             }
         });
     }
@@ -257,6 +267,10 @@ public class MonitorFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        BleService service = sharedViewModel.getBleService();
+        if (service != null) {
+            service.setDataCallback(null);
+        }
         algoExecutor.shutdownNow();
     }
 

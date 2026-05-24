@@ -4,6 +4,7 @@
     <string name="nav_home">主页</string>
     <string name="nav_monitor">监测</string>
     <string name="nav_history">历史</string>
+    <string name="title_history">历史记录</string>
     <string name="btn_start">开始采集</string>
     <string name="btn_stop">停止采集</string>
     <string name="btn_connect">连接设备</string>
@@ -15,4 +16,55 @@
     <string name="label_systolic">收缩压</string>
     <string name="label_diastolic">舒张压</string>
     <string name="label_heart_rate">心率</string>
+
+    <!-- 问卷导航 -->
+    <string name="nav_questionnaire">问卷</string>
+
+    <!-- 用户信息 -->
+    <string name="section_user_info">基本信息</string>
+    <string name="hint_nickname">昵称</string>
+    <string name="label_gender">性别</string>
+    <string name="gender_male">男</string>
+    <string name="gender_female">女</string>
+    <string name="hint_height">身高 (cm)</string>
+    <string name="hint_weight">体重 (kg)</string>
+
+    <!-- 问卷题目 -->
+    <string name="section_questionnaire">中医体质辨识问卷</string>
+    <string name="q1_pinghe">1. 您精力充沛吗？</string>
+    <string name="q2_yinxu">2. 您感觉身体、脸上发热吗？</string>
+    <string name="q3_tanshi">3. 您感到身体沉重不轻松或不爽快吗？</string>
+    <string name="q4_qiyu">4. 您感到闷闷不乐、情绪低沉吗？</string>
+    <string name="q5_fujia">5. 您容易口干咽燥吗？</string>
+
+    <!-- 选项 -->
+    <string name="opt_1">根本没有</string>
+    <string name="opt_2">有一点</string>
+    <string name="opt_3">有些</string>
+    <string name="opt_4">相当</string>
+    <string name="opt_5">非常</string>
+
+    <!-- 步骤导航 -->
+    <string name="btn_prev">上一题</string>
+    <string name="btn_next">下一题</string>
+    <string name="step_indicator">第 %1$d 题 / 共 %2$d 题</string>
+
+    <!-- 提交 -->
+    <string name="btn_submit">提交问卷</string>
+    <string name="err_nickname_empty">请输入昵称</string>
+    <string name="err_gender_empty">请选择性别</string>
+    <string name="err_height_empty">请输入身高</string>
+    <string name="err_weight_empty">请输入体重</string>
+    <string name="err_question_incomplete">请完成所有题目</string>
+
+    <!-- 结果页 -->
+    <string name="result_title">体质辨识结果</string>
+    <string name="type_pinghe">平和质</string>
+    <string name="type_yinxu">阴虚质</string>
+    <string name="type_tanshi">痰湿质</string>
+    <string name="type_qiyu">气郁质</string>
+    <string name="type_fujia">附加题</string>
+    <string name="btn_back_to_questionnaire">返回问卷</string>
+    <string name="result_user_summary">%1$s | %2$s | 身高%3$.0fcm | 体重%4$.0fkg</string>
+    <string name="score_format">%d 分</string>
 </resources>

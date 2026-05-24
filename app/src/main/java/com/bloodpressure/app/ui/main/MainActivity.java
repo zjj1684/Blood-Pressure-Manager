@@ -21,6 +21,7 @@ import com.bloodpressure.app.R;
 import com.bloodpressure.app.ble.BleService;
 import com.bloodpressure.app.ui.history.HistoryFragment;
 import com.bloodpressure.app.ui.monitor.MonitorFragment;
+import com.bloodpressure.app.ui.questionnaire.QuestionnaireFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new MonitorFragment();
             } else if (id == R.id.nav_history) {
                 fragment = new HistoryFragment();
+            } else if (id == R.id.nav_questionnaire) {
+                fragment = new QuestionnaireFragment();
             }
             if (fragment != null) {
                 getSupportFragmentManager()

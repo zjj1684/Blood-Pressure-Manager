@@ -1,116 +1,199 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/background">
 
-    <LinearLayout
+    <!-- 顶部状态栏 -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center_vertical">
+        android:layout_margin="@dimen/spacing_md"
+        app:cardCornerRadius="@dimen/radius_md"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/tv_status"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/status_disconnected"
-            android:textSize="16sp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:paddingVertical="@dimen/spacing_sm">
 
-        <Button
-            android:id="@+id/btn_connect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btn_connect" />
-    </LinearLayout>
+            <!-- 状态指示灯 -->
+            <View
+                android:id="@+id/view_status_dot"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:background="@drawable/bg_status_dot_disconnected" />
 
-    <com.bloodpressure.app.waveform.WaveformView
-        android:id="@+id/waveform_view"
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/status_disconnected"
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:layout_marginStart="@dimen/spacing_sm" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_connect"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="@string/btn_connect"
+                android:textSize="13sp"
+                android:minWidth="0dp"
+                app:cornerRadius="@dimen/radius_pill"
+                app:strokeColor="@color/primary"
+                android:textColor="@color/primary"
+                android:paddingHorizontal="16dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 波形区域 -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:layout_marginHorizontal="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_md"
+        app:cardCornerRadius="@dimen/radius_md"
+        app:cardElevation="2dp">
 
+        <com.bloodpressure.app.waveform.WaveformView
+            android:id="@+id/waveform_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 血压数据区 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        android:gravity="center_vertical">
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_sm">
 
+        <!-- 收缩压 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/bg_bp_card"
+            android:padding="@dimen/spacing_sm"
+            android:layout_marginEnd="@dimen/spacing_xs">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_systolic"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary" />
 
             <TextView
                 android:id="@+id/tv_systolic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="--"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/accent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="mmHg"
+                android:textSize="10sp"
+                android:textColor="@color/text_hint" />
         </LinearLayout>
 
+        <!-- 舒张压 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/bg_bp_card"
+            android:padding="@dimen/spacing_sm"
+            android:layout_marginHorizontal="@dimen/spacing_xs">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_diastolic"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary" />
 
             <TextView
                 android:id="@+id/tv_diastolic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="--"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="mmHg"
+                android:textSize="10sp"
+                android:textColor="@color/text_hint" />
         </LinearLayout>
 
+        <!-- 心率 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/bg_bp_card"
+            android:padding="@dimen/spacing_sm"
+            android:layout_marginStart="@dimen/spacing_xs">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_heart_rate"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary" />
 
             <TextView
                 android:id="@+id/tv_heart_rate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="-- bpm"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="--"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/waveform_ecg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bpm"
+                android:textSize="10sp"
+                android:textColor="@color/text_hint" />
         </LinearLayout>
     </LinearLayout>
 
-    <Button
+    <!-- 操作按钮 -->
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_start_stop"
+        style="@style/Widget.App.Button.Primary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginHorizontal="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_md"
         android:text="@string/btn_start"
         android:enabled="false" />
 

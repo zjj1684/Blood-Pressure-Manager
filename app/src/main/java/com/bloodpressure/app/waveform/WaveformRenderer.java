@@ -9,10 +9,10 @@ import android.graphics.Path;
 public class WaveformRenderer {
 
     private static final int GRID_COLOR = 0x33FFFFFF;
-    private static final int PPG_COLOR = Color.RED;
-    private static final int ECG_COLOR = Color.GREEN;
+    private static final int PPG_COLOR = 0xFFE8915A;  // 暖橙
+    private static final int ECG_COLOR = 0xFF5ABFA0;  // 翠绿
     private static final int BG_COLOR = 0xFF1A1A2E;
-    private static final int TEXT_COLOR = Color.WHITE;
+    private static final int TEXT_COLOR = 0xCCFFFFFF;
 
     private final Paint gridPaint;
     private final Paint ppgLinePaint;

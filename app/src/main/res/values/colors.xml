@@ -1,10 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#1976D2</color>
-    <color name="primary_dark">#0D47A1</color>
-    <color name="accent">#FF6F00</color>
+    <!-- 主色系：深松石绿 -->
+    <color name="primary">#2D6A5A</color>
+    <color name="primary_dark">#1B4D3E</color>
+    <color name="primary_light">#E8F5EE</color>
+
+    <!-- 强调色：暖赭石 -->
+    <color name="accent">#C75B39</color>
+    <color name="accent_light">#FFF0EB</color>
+
+    <!-- 背景 -->
+    <color name="background">#F5F1EB</color>
+    <color name="surface">#FFFFFF</color>
+
+    <!-- 文字 -->
+    <color name="text_primary">#2C2C2C</color>
+    <color name="text_secondary">#7A7A7A</color>
+    <color name="text_hint">#B0B0B0</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <!-- 分隔线 -->
+    <color name="divider">#E8E4DE</color>
+
+    <!-- 波形 -->
     <color name="waveform_bg">#1A1A2E</color>
-    <color name="waveform_ppg">#FF1744</color>
-    <color name="waveform_ecg">#00E676</color>
+    <color name="waveform_ppg">#E8915A</color>
+    <color name="waveform_ecg">#5ABFA0</color>
     <color name="waveform_grid">#33FFFFFF</color>
+
+    <!-- 状态 -->
+    <color name="status_connected">#2D6A5A</color>
+    <color name="status_disconnected">#B0B0B0</color>
+    <color name="status_error">#C75B39</color>
 </resources>
