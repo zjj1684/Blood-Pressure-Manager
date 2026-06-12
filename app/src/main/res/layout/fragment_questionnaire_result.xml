@@ -53,7 +53,7 @@
                 android:orientation="vertical"
                 android:padding="@dimen/spacing_md">
 
-                <!-- 平和质 -->
+                <!-- 第一题 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -69,12 +69,12 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/type_pinghe"
+                            android:text="@string/result_q1_label"
                             android:textSize="15sp"
                             android:textColor="@color/text_primary" />
 
                         <TextView
-                            android:id="@+id/tv_score_pinghe"
+                            android:id="@+id/tv_score_q1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
@@ -83,7 +83,7 @@
                     </LinearLayout>
 
                     <ProgressBar
-                        android:id="@+id/progress_pinghe"
+                        android:id="@+id/progress_q1"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
@@ -92,7 +92,7 @@
                         android:layout_marginTop="@dimen/spacing_xs" />
                 </LinearLayout>
 
-                <!-- 阴虚质 -->
+                <!-- 第二题 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -108,12 +108,12 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/type_yinxu"
+                            android:text="@string/result_q2_label"
                             android:textSize="15sp"
                             android:textColor="@color/text_primary" />
 
                         <TextView
-                            android:id="@+id/tv_score_yinxu"
+                            android:id="@+id/tv_score_q2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
@@ -122,7 +122,7 @@
                     </LinearLayout>
 
                     <ProgressBar
-                        android:id="@+id/progress_yinxu"
+                        android:id="@+id/progress_q2"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
@@ -131,7 +131,7 @@
                         android:layout_marginTop="@dimen/spacing_xs" />
                 </LinearLayout>
 
-                <!-- 痰湿质 -->
+                <!-- 第三题 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -147,12 +147,12 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/type_tanshi"
+                            android:text="@string/result_q3_label"
                             android:textSize="15sp"
                             android:textColor="@color/text_primary" />
 
                         <TextView
-                            android:id="@+id/tv_score_tanshi"
+                            android:id="@+id/tv_score_q3"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
@@ -161,7 +161,7 @@
                     </LinearLayout>
 
                     <ProgressBar
-                        android:id="@+id/progress_tanshi"
+                        android:id="@+id/progress_q3"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
@@ -170,46 +170,7 @@
                         android:layout_marginTop="@dimen/spacing_xs" />
                 </LinearLayout>
 
-                <!-- 气郁质 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginBottom="@dimen/spacing_md">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/type_qiyu"
-                            android:textSize="15sp"
-                            android:textColor="@color/text_primary" />
-
-                        <TextView
-                            android:id="@+id/tv_score_qiyu"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/primary" />
-                    </LinearLayout>
-
-                    <ProgressBar
-                        android:id="@+id/progress_qiyu"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:max="5"
-                        android:progressDrawable="@drawable/progress_bar_track"
-                        android:layout_marginTop="@dimen/spacing_xs" />
-                </LinearLayout>
-
-                <!-- 附加题 -->
+                <!-- 第四题 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -224,12 +185,12 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/type_fujia"
+                            android:text="@string/result_q4_label"
                             android:textSize="15sp"
                             android:textColor="@color/text_primary" />
 
                         <TextView
-                            android:id="@+id/tv_score_fujia"
+                            android:id="@+id/tv_score_q4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="15sp"
@@ -238,7 +199,7 @@
                     </LinearLayout>
 
                     <ProgressBar
-                        android:id="@+id/progress_fujia"
+                        android:id="@+id/progress_q4"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
                         android:layout_height="8dp"
@@ -246,6 +207,7 @@
                         android:progressDrawable="@drawable/progress_bar_track"
                         android:layout_marginTop="@dimen/spacing_xs" />
                 </LinearLayout>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -256,6 +218,14 @@
             android:layout_height="wrap_content"
             android:text="@string/btn_back_to_questionnaire"
             android:layout_marginTop="@dimen/spacing_lg" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_restart"
+            style="@style/Widget.App.Button.Outlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_restart_questionnaire"
+            android:layout_marginTop="@dimen/spacing_sm" />
 
     </LinearLayout>
 </ScrollView>

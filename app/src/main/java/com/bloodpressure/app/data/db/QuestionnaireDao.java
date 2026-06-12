@@ -19,6 +19,9 @@ public interface QuestionnaireDao {
     @Query("SELECT * FROM questionnaires WHERE id = :id")
     QuestionnaireEntity getById(long id);
 
+    @Query("SELECT * FROM questionnaires ORDER BY createdAt DESC LIMIT 1")
+    QuestionnaireEntity getLatest();
+
     @Query("DELETE FROM questionnaires WHERE id = :id")
     void delete(long id);
 }

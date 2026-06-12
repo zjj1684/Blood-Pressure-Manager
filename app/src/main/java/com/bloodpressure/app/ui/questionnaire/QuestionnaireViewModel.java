@@ -16,11 +16,15 @@ public class QuestionnaireViewModel extends AndroidViewModel {
     private final LiveData<List<QuestionnaireEntity>> allQuestionnaires;
 
     int currentStep = 0;
+    boolean showingCover = true;
+    boolean submitted = false;
+    QuestionnaireEntity submittedEntity = null;
     String savedNickname = "";
     int savedGenderIndex = -1; // 0=male, 1=female, -1=none
+    String savedAge = "";
     String savedHeight = "";
     String savedWeight = "";
-    int[] savedAnswers = new int[]{-1, -1, -1, -1, -1};
+    int[] savedAnswers = new int[]{-1, -1, -1, -1};
 
     public QuestionnaireViewModel(Application application) {
         super(application);

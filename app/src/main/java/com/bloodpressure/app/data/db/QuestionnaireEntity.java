@@ -9,12 +9,12 @@ public class QuestionnaireEntity {
     public long id;
     public String nickname;
     public String gender;
+    public int age;
     public float height;
     public float weight;
     public int scorePinghe;
     public int scoreYinxu;
     public int scoreTanshi;
     public int scoreQiyu;
-    public int scoreFujia;
     public long createdAt;
 }

@@ -34,4 +34,8 @@ public class QuestionnaireRepository {
     public void delete(long id) {
         executor.execute(() -> dao.delete(id));
     }
+
+    public QuestionnaireEntity getLatest() {
+        return dao.getLatest();
+    }
 }

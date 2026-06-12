@@ -27,21 +27,20 @@ import com.google.android.material.button.MaterialButton;
 
 public class QuestionnaireFragment extends Fragment {
 
+    private static final int STEP_COVER = -1;
     private static final int STEP_USER_INFO = 0;
     private static final int STEP_Q1 = 1;
     private static final int STEP_Q2 = 2;
     private static final int STEP_Q3 = 3;
     private static final int STEP_Q4 = 4;
-    private static final int STEP_Q5 = 5;
-    private static final int TOTAL_STEPS = 6;
+    private static final int TOTAL_STEPS = 5;
 
     private static final int[][] QUESTION_TEXT_RES = {
             {},
-            {R.string.q1_pinghe},
+            {R.string.q1_tanshi},
             {R.string.q2_yinxu},
-            {R.string.q3_tanshi},
-            {R.string.q4_qiyu},
-            {R.string.q5_fujia}
+            {R.string.q3_qiyu},
+            {R.string.q4_pinghe}
     };
 
     private QuestionnaireViewModel viewModel;
@@ -51,6 +50,7 @@ public class QuestionnaireFragment extends Fragment {
 
     private EditText etNickname;
     private RadioGroup rgGender;
+    private EditText etAge;
     private EditText etHeight;
     private EditText etWeight;
     private RadioGroup currentQuestionRg;
@@ -74,7 +74,13 @@ public class QuestionnaireFragment extends Fragment {
         btnPrev.setOnClickListener(v -> onPrev());
         btnNext.setOnClickListener(v -> onNext());
 
-        goToStep(viewModel.currentStep);
+        if (viewModel.submitted && viewModel.submittedEntity != null) {
+            showResult(viewModel.submittedEntity);
+        } else if (viewModel.showingCover) {
+            goToStep(STEP_COVER);
+        } else {
+            goToStep(viewModel.currentStep);
+        }
     }
 
     private void goToStep(int step) {
@@ -82,13 +88,62 @@ public class QuestionnaireFragment extends Fragment {
         viewModel.currentStep = step;
         stepContainer.removeAllViews();
 
-        if (step == STEP_USER_INFO) {
+        if (step == STEP_COVER) {
+            buildCoverStep();
+        } else if (step == STEP_USER_INFO) {
             buildUserInfoStep();
-        } else if (step >= STEP_Q1 && step <= STEP_Q5) {
+        } else if (step >= STEP_Q1 && step <= STEP_Q4) {
             buildQuestionStep(step);
         }
 
         updateNavButtons();
+    }
+
+    private void buildCoverStep() {
+        LinearLayout layout = new LinearLayout(requireContext());
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setGravity(Gravity.CENTER_HORIZONTAL);
+        layout.setPadding(dp(32), dp(80), dp(32), dp(32));
+
+        // 标题
+        TextView title = new TextView(requireContext());
+        title.setText(R.string.cover_title);
+        title.setTextSize(26);
+        title.setTypeface(null, Typeface.BOLD);
+        title.setGravity(Gravity.CENTER);
+        title.setTextColor(0xFF333333);
+        LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        titleLp.bottomMargin = dp(24);
+        layout.addView(title, titleLp);
+
+        // 说明文字
+        TextView desc = new TextView(requireContext());
+        desc.setText(R.string.cover_description);
+        desc.setTextSize(15);
+        desc.setGravity(Gravity.CENTER);
+        desc.setTextColor(0xFF666666);
+        desc.setLineSpacing(dp(4), 1);
+        LinearLayout.LayoutParams descLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        descLp.bottomMargin = dp(48);
+        layout.addView(desc, descLp);
+
+        // 开始填写按钮
+        MaterialButton btnStart = new MaterialButton(requireContext());
+        btnStart.setText(R.string.btn_start_questionnaire);
+        btnStart.setTextSize(16);
+        btnStart.setCornerRadius(dp(24));
+        btnStart.setPadding(dp(32), dp(14), dp(32), dp(14));
+        LinearLayout.LayoutParams btnLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        btnStart.setOnClickListener(v -> {
+            viewModel.showingCover = false;
+            goToStep(STEP_USER_INFO);
+        });
+        layout.addView(btnStart, btnLp);
+
+        stepContainer.addView(layout);
     }
 
     private void buildUserInfoStep() {
@@ -141,6 +196,17 @@ public class QuestionnaireFragment extends Fragment {
         genderLp.bottomMargin = dp(16);
         layout.addView(rgGender, genderLp);
 
+        // 年龄
+        etAge = new EditText(requireContext());
+        etAge.setHint(R.string.hint_age);
+        etAge.setInputType(InputType.TYPE_CLASS_NUMBER);
+        etAge.setTextSize(16);
+        etAge.setPadding(dp(12), dp(12), dp(12), dp(12));
+        LinearLayout.LayoutParams ageLp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ageLp.bottomMargin = dp(16);
+        layout.addView(etAge, ageLp);
+
         // 身高体重
         LinearLayout hwRow = new LinearLayout(requireContext());
         hwRow.setOrientation(LinearLayout.HORIZONTAL);
@@ -174,6 +240,9 @@ public class QuestionnaireFragment extends Fragment {
         }
         if (viewModel.savedGenderIndex >= 0) {
             ((RadioButton) rgGender.getChildAt(viewModel.savedGenderIndex)).setChecked(true);
+        }
+        if (!viewModel.savedAge.isEmpty()) {
+            etAge.setText(viewModel.savedAge);
         }
         if (!viewModel.savedHeight.isEmpty()) {
             etHeight.setText(viewModel.savedHeight);
@@ -256,13 +325,16 @@ public class QuestionnaireFragment extends Fragment {
                     }
                 }
             }
+            if (etAge != null) {
+                viewModel.savedAge = etAge.getText().toString().trim();
+            }
             if (etHeight != null) {
                 viewModel.savedHeight = etHeight.getText().toString().trim();
             }
             if (etWeight != null) {
                 viewModel.savedWeight = etWeight.getText().toString().trim();
             }
-        } else if (step >= STEP_Q1 && step <= STEP_Q5 && currentQuestionRg != null) {
+        } else if (step >= STEP_Q1 && step <= STEP_Q4 && currentQuestionRg != null) {
             int qIndex = step - STEP_Q1;
             int checkedId = currentQuestionRg.getCheckedRadioButtonId();
             if (checkedId != -1) {
@@ -278,8 +350,14 @@ public class QuestionnaireFragment extends Fragment {
 
     private void updateNavButtons() {
         int step = viewModel.currentStep;
-        btnPrev.setVisibility(step == STEP_USER_INFO ? View.INVISIBLE : View.VISIBLE);
-        btnNext.setText(step == STEP_Q5 ? R.string.btn_submit : R.string.btn_next);
+        View navBar = getView() != null ? getView().findViewById(R.id.nav_bar) : null;
+        if (step == STEP_COVER) {
+            if (navBar != null) navBar.setVisibility(View.GONE);
+        } else {
+            if (navBar != null) navBar.setVisibility(View.VISIBLE);
+            btnPrev.setVisibility(step == STEP_USER_INFO ? View.INVISIBLE : View.VISIBLE);
+            btnNext.setText(step == STEP_Q4 ? R.string.btn_submit : R.string.btn_next);
+        }
     }
 
     private void onPrev() {
@@ -294,13 +372,13 @@ public class QuestionnaireFragment extends Fragment {
 
         if (step == STEP_USER_INFO) {
             if (!validateUserInfo()) return;
-        } else if (step >= STEP_Q1 && step <= STEP_Q5) {
+        } else if (step >= STEP_Q1 && step <= STEP_Q4) {
             if (!validateCurrentQuestion()) return;
         }
 
         saveCurrentStepData();
 
-        if (step < STEP_Q5) {
+        if (step < STEP_Q4) {
             goToStep(step + 1);
         } else {
             submit();
@@ -314,6 +392,10 @@ public class QuestionnaireFragment extends Fragment {
         }
         if (rgGender.getCheckedRadioButtonId() == -1) {
             Toast.makeText(requireContext(), R.string.err_gender_empty, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (etAge.getText().toString().trim().isEmpty()) {
+            Toast.makeText(requireContext(), R.string.err_age_empty, Toast.LENGTH_SHORT).show();
             return false;
         }
         if (etHeight.getText().toString().trim().isEmpty()) {
@@ -344,13 +426,15 @@ public class QuestionnaireFragment extends Fragment {
                 ? getString(R.string.gender_male) : getString(R.string.gender_female);
         entity.height = Float.parseFloat(viewModel.savedHeight);
         entity.weight = Float.parseFloat(viewModel.savedWeight);
-        entity.scorePinghe = viewModel.savedAnswers[0] + 1;
+        entity.age = Integer.parseInt(viewModel.savedAge);
+        entity.scoreTanshi = viewModel.savedAnswers[0] + 1;
         entity.scoreYinxu = viewModel.savedAnswers[1] + 1;
-        entity.scoreTanshi = viewModel.savedAnswers[2] + 1;
-        entity.scoreQiyu = viewModel.savedAnswers[3] + 1;
-        entity.scoreFujia = viewModel.savedAnswers[4] + 1;
+        entity.scoreQiyu = viewModel.savedAnswers[2] + 1;
+        entity.scorePinghe = viewModel.savedAnswers[3] + 1;
         entity.createdAt = System.currentTimeMillis();
         viewModel.save(entity);
+        viewModel.submitted = true;
+        viewModel.submittedEntity = entity;
 
         showResult(entity);
     }
@@ -364,22 +448,22 @@ public class QuestionnaireFragment extends Fragment {
 
         TextView tvSummary = stepContainer.findViewById(R.id.tv_user_summary);
         tvSummary.setText(getString(R.string.result_user_summary,
-                entity.nickname, entity.gender, entity.height, entity.weight));
+                entity.nickname, entity.gender, entity.age, entity.height, entity.weight));
 
         int[] scoreValues = {
-                entity.scorePinghe, entity.scoreYinxu, entity.scoreTanshi,
-                entity.scoreQiyu, entity.scoreFujia
+                entity.scoreTanshi, entity.scoreYinxu, entity.scoreQiyu,
+                entity.scorePinghe
         };
         int[] tvIds = {
-                R.id.tv_score_pinghe, R.id.tv_score_yinxu, R.id.tv_score_tanshi,
-                R.id.tv_score_qiyu, R.id.tv_score_fujia
+                R.id.tv_score_q1, R.id.tv_score_q2, R.id.tv_score_q3,
+                R.id.tv_score_q4
         };
         int[] progressIds = {
-                R.id.progress_pinghe, R.id.progress_yinxu, R.id.progress_tanshi,
-                R.id.progress_qiyu, R.id.progress_fujia
+                R.id.progress_q1, R.id.progress_q2, R.id.progress_q3,
+                R.id.progress_q4
         };
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 4; i++) {
             TextView tv = stepContainer.findViewById(tvIds[i]);
             tv.setText(getString(R.string.score_format, scoreValues[i]));
 
@@ -389,15 +473,29 @@ public class QuestionnaireFragment extends Fragment {
 
         MaterialButton btnBack = stepContainer.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
-            viewModel.currentStep = 0;
-            viewModel.savedNickname = "";
-            viewModel.savedGenderIndex = -1;
-            viewModel.savedHeight = "";
-            viewModel.savedWeight = "";
-            viewModel.savedAnswers = new int[]{-1, -1, -1, -1, -1};
+            viewModel.submitted = false;
+            viewModel.submittedEntity = null;
+            viewModel.showingCover = false;
 
             navBar.setVisibility(View.VISIBLE);
             goToStep(STEP_USER_INFO);
+        });
+
+        MaterialButton btnRestart = stepContainer.findViewById(R.id.btn_restart);
+        btnRestart.setOnClickListener(v -> {
+            viewModel.currentStep = 0;
+            viewModel.submitted = false;
+            viewModel.submittedEntity = null;
+            viewModel.showingCover = true;
+            viewModel.savedNickname = "";
+            viewModel.savedGenderIndex = -1;
+            viewModel.savedAge = "";
+            viewModel.savedHeight = "";
+            viewModel.savedWeight = "";
+            viewModel.savedAnswers = new int[]{-1, -1, -1, -1};
+
+            navBar.setVisibility(View.VISIBLE);
+            goToStep(STEP_COVER);
         });
     }
 
