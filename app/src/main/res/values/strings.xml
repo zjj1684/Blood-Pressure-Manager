@@ -3,8 +3,28 @@
     <string name="app_name">血压健康</string>
     <string name="nav_home">主页</string>
     <string name="nav_monitor">监测</string>
-    <string name="nav_history">历史</string>
-    <string name="title_history">历史记录</string>
+    <string name="nav_health_advice">健康建议</string>
+    <string name="title_health_advice">健康建议</string>
+    <string name="btn_generate_report">生成报告</string>
+    <string name="label_report_date">报告日期</string>
+    <string name="label_constitution_type">体质类型</string>
+    <string name="label_latest_bp">最新血压</string>
+    <string name="label_latest_hr">最新心率</string>
+    <string name="section_general_advice">概括性建议</string>
+    <string name="section_dietary_advice">饮食调理指导</string>
+    <string name="section_acupressure_advice">穴位按摩指导</string>
+    <string name="section_ear_acupressure">耳穴压豆</string>
+    <string name="label_confidence">可信度 %1$d%%</string>
+    <string name="label_primary_constitution">主要体质</string>
+    <string name="label_secondary_constitution">次要体质</string>
+    <string name="label_ear_front">耳前穴位</string>
+    <string name="label_ear_back">耳背穴位（所有体质通用）</string>
+    <string name="bp_format">%1$d/%2$d mmHg</string>
+    <string name="hr_format">%1$d bpm</string>
+    <string name="bp_unavailable">--/-- mmHg</string>
+    <string name="hr_unavailable">-- bpm</string>
+    <string name="err_no_questionnaire">请先完成问卷以生成报告</string>
+    <string name="section_report_history">历史报告</string>
     <string name="btn_start">开始采集</string>
     <string name="btn_stop">停止采集</string>
     <string name="btn_connect">连接设备</string>
@@ -20,6 +40,11 @@
     <!-- 问卷导航 -->
     <string name="nav_questionnaire">问卷</string>
 
+    <!-- 问卷封面 -->
+    <string name="cover_title">中医体质辨识问卷</string>
+    <string name="cover_description">本问卷根据中医体质分类标准，帮助您了解自身体质类型，为个性化健康调理提供参考依据。</string>
+    <string name="btn_start_questionnaire">开始填写</string>
+
     <!-- 用户信息 -->
     <string name="section_user_info">基本信息</string>
     <string name="hint_nickname">昵称</string>
@@ -28,14 +53,15 @@
     <string name="gender_female">女</string>
     <string name="hint_height">身高 (cm)</string>
     <string name="hint_weight">体重 (kg)</string>
+    <string name="hint_age">年龄</string>
+    <string name="err_age_empty">请输入年龄</string>
 
     <!-- 问卷题目 -->
     <string name="section_questionnaire">中医体质辨识问卷</string>
-    <string name="q1_pinghe">1. 您精力充沛吗？</string>
+    <string name="q1_tanshi">1. 您腹部肥满松软吗？</string>
     <string name="q2_yinxu">2. 您感觉身体、脸上发热吗？</string>
-    <string name="q3_tanshi">3. 您感到身体沉重不轻松或不爽快吗？</string>
-    <string name="q4_qiyu">4. 您感到闷闷不乐、情绪低沉吗？</string>
-    <string name="q5_fujia">5. 您容易口干咽燥吗？</string>
+    <string name="q3_qiyu">3. 您容易精神紧张、焦虑不安吗？</string>
+    <string name="q4_pinghe">4. 您精力充沛吗？</string>
 
     <!-- 选项 -->
     <string name="opt_1">根本没有</string>
@@ -58,13 +84,13 @@
     <string name="err_question_incomplete">请完成所有题目</string>
 
     <!-- 结果页 -->
-    <string name="result_title">体质辨识结果</string>
-    <string name="type_pinghe">平和质</string>
-    <string name="type_yinxu">阴虚质</string>
-    <string name="type_tanshi">痰湿质</string>
-    <string name="type_qiyu">气郁质</string>
-    <string name="type_fujia">附加题</string>
+    <string name="result_title">体质问卷结果</string>
     <string name="btn_back_to_questionnaire">返回问卷</string>
-    <string name="result_user_summary">%1$s | %2$s | 身高%3$.0fcm | 体重%4$.0fkg</string>
+    <string name="btn_restart_questionnaire">重新填写</string>
+    <string name="result_user_summary">%1$s | %2$s | %3$d岁 | 身高%4$.0fcm | 体重%5$.0fkg</string>
     <string name="score_format">%d 分</string>
+    <string name="result_q1_label">第一题</string>
+    <string name="result_q2_label">第二题</string>
+    <string name="result_q3_label">第三题</string>
+    <string name="result_q4_label">第四题</string>
 </resources>

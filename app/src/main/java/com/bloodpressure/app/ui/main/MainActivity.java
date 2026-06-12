@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.bloodpressure.app.R;
 import com.bloodpressure.app.ble.BleService;
-import com.bloodpressure.app.ui.history.HistoryFragment;
+import com.bloodpressure.app.ui.advice.HealthAdviceFragment;
 import com.bloodpressure.app.ui.monitor.MonitorFragment;
 import com.bloodpressure.app.ui.questionnaire.QuestionnaireFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.nav_monitor) {
                 fragment = new MonitorFragment();
-            } else if (id == R.id.nav_history) {
-                fragment = new HistoryFragment();
+            } else if (id == R.id.nav_health_advice) {
+                fragment = new HealthAdviceFragment();
             } else if (id == R.id.nav_questionnaire) {
                 fragment = new QuestionnaireFragment();
             }
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState == null) {
-            bottomNav.setSelectedItemId(R.id.nav_monitor);
+            bottomNav.setSelectedItemId(R.id.nav_questionnaire);
         }
 
         // Check permissions and start service

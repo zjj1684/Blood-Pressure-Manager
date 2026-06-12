@@ -32,4 +32,10 @@
     <color name="status_connected">#2D6A5A</color>
     <color name="status_disconnected">#B0B0B0</color>
     <color name="status_error">#C75B39</color>
+
+    <!-- 体质类型 -->
+    <color name="type_pinghe">#2D6A5A</color>
+    <color name="type_yinxu">#C75B39</color>
+    <color name="type_tanshi">#B8860B</color>
+    <color name="type_qiyu">#7B68AE</color>
 </resources>
